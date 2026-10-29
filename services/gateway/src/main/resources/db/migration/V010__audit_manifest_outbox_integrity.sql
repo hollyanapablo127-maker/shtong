@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS audit.manifest (manifest_id uuid PRIMARY KEY DEFAULT gen_random_uuid(), manifest_kind varchar(32) NOT NULL, item_count bigint NOT NULL, root_hash bytea NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), CHECK(octet_length(root_hash)=32));
+CREATE TABLE IF NOT EXISTS audit.outbox (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), event_recorded_date date NOT NULL, event_id uuid NOT NULL, state varchar(16) NOT NULL DEFAULT 'PENDING', attempts integer NOT NULL DEFAULT 0, next_attempt_at timestamptz NOT NULL DEFAULT now(), replay_until timestamptz);

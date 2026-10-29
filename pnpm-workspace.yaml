@@ -1,0 +1,7 @@
+packages:
+  - "apps/web/*"
+  - "packages/api-sdk/typescript"
+
+# esbuild (used by Vite and Nuxt) verifies its platform binary in a postinstall script.
+allowBuilds:
+  esbuild: true

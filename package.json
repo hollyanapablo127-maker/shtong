@@ -1,0 +1,12 @@
+{
+  "name": "shtong",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "engines": {"node": ">=24.0.0"},
+  "scripts": {
+    "dev:admin": "pnpm --filter @shtong/web-admin dev",
+    "dev:user": "pnpm --filter @shtong/web-user dev",
+    "build:web": "pnpm --filter @shtong/web-shared build && pnpm --filter @shtong/web-user build && pnpm --filter @shtong/web-admin build",
+    "typecheck:web": "pnpm -r --if-present typecheck"
+  }
+}

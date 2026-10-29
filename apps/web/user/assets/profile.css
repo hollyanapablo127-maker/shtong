@@ -1,0 +1,71 @@
+.profile {
+  display: grid;
+  gap: 24px;
+  max-width: 720px;
+}
+
+.profile-list {
+  margin: 0;
+  border-top: 1px solid var(--border);
+  background: #fff;
+}
+
+.profile-list > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 160px) 1fr;
+  gap: 20px;
+  padding: 15px 18px;
+  border-bottom: 1px solid #e7ecea;
+}
+
+.profile-list dt {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.profile-list dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.copy-hint { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:14px; }
+.copy-value { width:100%; min-height:44px; border:0; background:transparent; color:inherit; text-align:left; padding:4px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; border-radius:4px; }
+.copy-value svg { flex:0 0 auto; color:#64748b; }
+.copy-value:hover { color:var(--primary); background:#f4f7f6; }
+.copy-value.sensitive { color:#334155; }
+
+.profile-action,
+.back-button {
+  width: max-content;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-button {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #334155;
+  padding: 9px 14px;
+}
+
+.back-button:hover { background: #f4f7f6; }
+
+.password-page form {
+  max-width: 620px;
+  background: #fff;
+  border-top: 3px solid var(--primary);
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 760px) {
+  .profile-list > div {
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    padding-inline: 14px;
+  }
+}

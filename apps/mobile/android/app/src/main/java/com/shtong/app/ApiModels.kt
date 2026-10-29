@@ -1,0 +1,45 @@
+package com.shtong.app
+
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+
+const val ANDROID_CHANNEL="ANDROID"
+
+@Serializable data class LoginRequest(val loginName:String,val password:String,val channel:String)
+@Serializable data class ContextRequest(val workspace:String)
+@Serializable data class RefreshRequest(val channel:String,val refreshToken:String)
+@Serializable data class LoginResponse(val status:String,val challengeId:String?=null,val expiresAt:String?=null,val allowedActions:List<String> = emptyList(),val session:SessionEstablished?=null)
+@Serializable data class SessionEstablished(val sessionId:String,val context:SessionContext,val tokenDelivery:String,val mobileTokens:MobileTokens?=null)
+@Serializable data class SessionContext(val id:String,val workspace:String,val assuranceLevel:String,val expiresAt:String)
+@Serializable data class MobileTokens(val tokenType:String,val accessToken:String,val refreshToken:String,val accessTokenExpiresAt:String,val refreshTokenExpiresAt:String)
+@Serializable data class Bootstrap(val contractVersion:String,val authorizationVersion:Long,val profileCompletionRequired:Boolean=false,val activeContext:SessionContext?=null,val activeModules:List<ActiveModule> = emptyList(),val shellActions:List<String> = emptyList(),val availableWorkspaces:List<AvailableWorkspace> = emptyList())
+@Serializable data class ActiveModule(val code:String,val routeKey:String,val order:Int,val externalSystem:String?=null,val sso:String?=null)
+@Serializable data class AvailableWorkspace(val code:String,val requiresStepUp:Boolean)
+@Serializable data class ProfileOrganizationItem(val type:String,val code:String,val name:String)
+@Serializable data class ProfileCounselor(val displayName:String,val personNo:String)
+@Serializable data class ProfileScope(val type:String,val name:String,val path:String)
+@Serializable data class ProfileManagedScope(val roleCode:String,val scopes:List<ProfileScope> = emptyList())
+@Serializable data class Profile(val accountId:String,val displayName:String,val personNo:String,val gender:String?=null,val ethnicity:String?=null,val age:Int?=null,val roleCodes:List<String> = emptyList(),val organizationPath:List<ProfileOrganizationItem> = emptyList(),val counselors:List<ProfileCounselor> = emptyList(),val managedScopes:List<ProfileManagedScope> = emptyList(),val profileCompletionRequired:Boolean=false,val idCardNumberMasked:String?=null,val mobileNumberMasked:String?=null,val currentAddressMasked:String?=null,val householdAddressMasked:String?=null,val version:Long)
+@Serializable data class AdministrativeDivision(val code:String,val name:String)
+@Serializable data class ProfileAddressInput(val provinceCode:String,val cityCode:String,val districtCode:String,val detail:String)
+@Serializable data class ProfileAddressDetail(val provinceCode:String,val provinceName:String,val cityCode:String,val cityName:String,val districtCode:String,val districtName:String,val detail:String)
+@Serializable data class ProfileCompletionRequest(val idCardNumber:String,val mobileNumber:String,val ethnicity:String,val currentAddress:ProfileAddressInput,val householdAddress:ProfileAddressInput)
+@Serializable data class ProfileCompletionResponse(val profile:Profile,val session:SessionEstablished)
+@Serializable data class SensitiveProfileFieldResponse(val field:String,val value:String)
+@Serializable data class AccountSummary(val id:String,val loginName:String,val displayName:String,val personNo:String,val gender:String?=null,val lifecycleStatus:String,val securityStatus:String,val roleCodes:List<String>,val passwordChangeRequired:Boolean,val version:Long,val graduatedAt:String?=null,val graduatedReason:String?=null)
+@Serializable data class AccountDetail(val id:String,val loginName:String,val displayName:String,val personNo:String,val gender:String?=null,val lifecycleStatus:String,val securityStatus:String,val roleCodes:List<String>,val passwordChangeRequired:Boolean,val version:Long,val classId:String?=null,val organizationPath:List<ProfileOrganizationItem> = emptyList(),val idCardNumber:String?=null,val mobileNumber:String?=null,val currentAddress:ProfileAddressDetail?=null,val householdAddress:ProfileAddressDetail?=null,val profileCompleted:Boolean=false,val graduatedAt:String?=null,val graduatedReason:String?=null,val lastLoginAt:String?=null,val createdAt:String?=null,val updatedAt:String?=null,val ethnicity:String?=null,val age:Int?=null)
+@Serializable data class AccountPage(val items:List<AccountSummary>,val nextCursor:String?=null,val hasMore:Boolean)
+@Serializable data class OrgUnit(val id:String,val type:String,val parentId:String?=null,val code:String,val name:String,val status:String,val version:Long)
+@Serializable data class RoleAssignment(val id:String,val roleCode:String,val status:String,val scopeCeilings:List<OrgUnit>,val validFrom:String,val validTo:String?=null,val version:Long)
+@Serializable data class AuditEvent(val eventId:String,val eventCode:String,val occurredAt:String,val actorAccountId:String?=null,val authorizationDecision:String,val outcome:String,val requestId:String,val subjectCount:Int=0)
+@Serializable data class ImportError(val sheet:String,val row:Int,val field:String,val code:String,val messageKey:String="")
+@Serializable data class ImportJob(val id:String,val state:String,val templateVersion:String,val rowCount:Int,val errorCount:Int,val organizationRevision:Long)
+@Serializable data class JobAccepted(val jobId:String,val state:String,val controlRequestId:String?=null)
+@Serializable data class JobStatus(val id:String,val state:String,val resultCount:Int?=null,val failureCode:String?=null,val createdAt:String?=null,val completedAt:String?=null)
+@Serializable data class DownloadTicket(val url:String,val expiresAt:String,val singleUse:Boolean)
+@Serializable data class MedicalInsuranceTicket(val moduleCode:String,val audience:String,val redirectUrl:String,val expiresAt:String,val singleUse:Boolean)
+@Serializable data class AuditEventDetail(val eventId:String,val eventCode:String,val occurredAt:String,val actorAccountId:String?=null,val authorizationDecision:String,val outcome:String,val requestId:String,val subjectCount:Int=0,val workspace:String?=null,val channel:String?=null,val reasonCode:String?=null,val subjects:List<String> = emptyList(),val resources:List<JsonMap> = emptyList(),val changes:List<JsonMap> = emptyList(),val authorizationEvidence:List<JsonMap> = emptyList())
+@Serializable data class Page<T>(val items:List<T>,val nextCursor:String?=null,val hasMore:Boolean=false)
+@Serializable data class ApiFailure(val code:String="NETWORK_ERROR",val messageKey:String="error.network",val requestId:String="")
+class ApiException(val failure:ApiFailure,val status:Int):RuntimeException(failure.code)
+typealias JsonMap = Map<String, JsonElement>

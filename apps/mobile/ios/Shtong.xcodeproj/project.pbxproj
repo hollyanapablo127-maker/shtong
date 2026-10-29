@@ -1,0 +1,176 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		100000000000000000000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000014 /* Assets.xcassets */; };
+		100000000000000000000013 /* UiText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000013 /* UiText.swift */; };
+		100000000000000000000001 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000001 /* APIClient.swift */; };
+		100000000000000000000002 /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000002 /* AccountsView.swift */; };
+		100000000000000000000003 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000003 /* AppModel.swift */; };
+		100000000000000000000004 /* AuditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000004 /* AuditView.swift */; };
+		100000000000000000000005 /* AuthenticationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000005 /* AuthenticationViews.swift */; };
+		100000000000000000000006 /* AuthorizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000006 /* AuthorizationView.swift */; };
+		100000000000000000000007 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000007 /* KeychainStore.swift */; };
+		100000000000000000000008 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000008 /* Models.swift */; };
+		100000000000000000000009 /* OrganizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000009 /* OrganizationView.swift */; };
+		10000000000000000000000A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000A /* ProfileView.swift */; };
+		10000000000000000000000B /* ShtongApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000B /* ShtongApp.swift */; };
+		10000000000000000000000C /* ShtongTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000C /* ShtongTheme.swift */; };
+		10000000000000000000000D /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000D /* WorkspaceView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		200000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		200000000000000000000013 /* UiText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiText.swift; sourceTree = "<group>"; };
+		200000000000000000000001 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		200000000000000000000002 /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
+		200000000000000000000003 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		200000000000000000000004 /* AuditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditView.swift; sourceTree = "<group>"; };
+		200000000000000000000005 /* AuthenticationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViews.swift; sourceTree = "<group>"; };
+		200000000000000000000006 /* AuthorizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationView.swift; sourceTree = "<group>"; };
+		200000000000000000000007 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		200000000000000000000008 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		200000000000000000000009 /* OrganizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationView.swift; sourceTree = "<group>"; };
+		20000000000000000000000A /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		20000000000000000000000B /* ShtongApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShtongApp.swift; sourceTree = "<group>"; };
+		20000000000000000000000C /* ShtongTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShtongTheme.swift; sourceTree = "<group>"; };
+		20000000000000000000000D /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
+		20000000000000000000000F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		200000000000000000000010 /* Shtong.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shtong.entitlements; sourceTree = "<group>"; };
+		200000000000000000000011 /* Shtong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shtong.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		400000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		400000000000000000000002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		500000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				500000000000000000000002 /* Sources */,
+				500000000000000000000003 /* Resources */,
+				500000000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		500000000000000000000002 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				200000000000000000000001 /* APIClient.swift */,
+				200000000000000000000002 /* AccountsView.swift */,
+				200000000000000000000003 /* AppModel.swift */,
+				200000000000000000000004 /* AuditView.swift */,
+				200000000000000000000005 /* AuthenticationViews.swift */,
+				200000000000000000000006 /* AuthorizationView.swift */,
+				200000000000000000000007 /* KeychainStore.swift */,
+				200000000000000000000008 /* Models.swift */,
+				200000000000000000000009 /* OrganizationView.swift */,
+				20000000000000000000000A /* ProfileView.swift */,
+				20000000000000000000000B /* ShtongApp.swift */,
+				20000000000000000000000C /* ShtongTheme.swift */,
+				20000000000000000000000D /* WorkspaceView.swift */,
+				200000000000000000000013 /* UiText.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		500000000000000000000003 /* Resources */ = {
+			isa = PBXGroup;
+			children = (20000000000000000000000F /* Info.plist */, 200000000000000000000010 /* Shtong.entitlements */, 200000000000000000000014 /* Assets.xcassets */);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		500000000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (200000000000000000000011 /* Shtong.app */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		600000000000000000000001 /* Shtong */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000001;
+			buildPhases = (E000000000000000000000001 /* Validate release endpoints */, B00000000000000000000001 /* Sources */, 400000000000000000000001 /* Frameworks */, C00000000000000000000001 /* Resources */);
+			buildRules = ();
+			dependencies = ();
+			name = Shtong;
+			productName = Shtong;
+			productReference = 200000000000000000000011 /* Shtong.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		700000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1600; LastUpgradeCheck = 1600; TargetAttributes = {600000000000000000000001 = {CreatedOnToolsVersion = 16.0; };};};
+			buildConfigurationList = A00000000000000000000003;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = zh_Hans;
+			hasScannedForEncodings = 0;
+			knownRegions = (Base, en, zh_Hans);
+			mainGroup = 500000000000000000000001;
+			productRefGroup = 500000000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (600000000000000000000001 /* Shtong */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C00000000000000000000001 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000014 /* Assets.xcassets in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E000000000000000000000001 /* Validate release endpoints */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = "Validate release endpoints";
+			outputPaths = ();
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ]; then\n  case \"$API_BASE_URL\" in \"\"|*example*) echo \"Release API_BASE_URL must be supplied by CI\" >&2; exit 1;; esac\n  case \"$ASSOCIATED_DOMAIN\" in \"\"|*example*) echo \"Release ASSOCIATED_DOMAIN must be supplied by CI\" >&2; exit 1;; esac\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B00000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000001, 100000000000000000000002, 100000000000000000000003,
+				100000000000000000000004, 100000000000000000000005, 100000000000000000000006,
+				100000000000000000000007, 100000000000000000000008, 100000000000000000000009,
+				10000000000000000000000A, 10000000000000000000000B, 10000000000000000000000C,
+				10000000000000000000000D,
+				100000000000000000000013,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D00000000000000000000001 /* Debug App */ = {isa = XCBuildConfiguration; buildSettings = {API_BASE_URL = "http://127.0.0.1:8080/v1/"; ASSOCIATED_DOMAIN = mobile.shtong.example; TRUSTED_DOWNLOAD_HOST = ""; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = Resources/Shtong.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 11; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 0.1.10; PRODUCT_BUNDLE_IDENTIFIER = com.shtong.app; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.10; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		D00000000000000000000002 /* Release App */ = {isa = XCBuildConfiguration; buildSettings = {API_BASE_URL = "$(SHTONG_RELEASE_API_BASE_URL)"; ASSOCIATED_DOMAIN = "$(SHTONG_ASSOCIATED_DOMAIN)"; TRUSTED_DOWNLOAD_HOST = "$(SHTONG_TRUSTED_DOWNLOAD_HOST)"; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = Resources/Shtong.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 11; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Resources/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 0.1.10; PRODUCT_BUNDLE_IDENTIFIER = com.shtong.app; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_VERSION = 5.10; TARGETED_DEVICE_FAMILY = "1,2"; VALIDATE_PRODUCT = YES; }; name = Release; };
+		D00000000000000000000005 /* Debug Project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; GCC_C_LANGUAGE_STANDARD = gnu17; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		D00000000000000000000006 /* Release Project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; GCC_C_LANGUAGE_STANDARD = gnu17; SDKROOT = iphoneos; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (D00000000000000000000001, D00000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A00000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (D00000000000000000000005, D00000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = 700000000000000000000001 /* Project object */;
+}

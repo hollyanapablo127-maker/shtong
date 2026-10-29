@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: ${SHTONG_DATABASE_URL}
+    username: ${SHTONG_DATABASE_USER}
+    password: ${SHTONG_DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${SHTONG_DATABASE_POOL_SIZE:20}
+      minimum-idle: 2
+      auto-commit: false
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      data-source-properties:
+        ApplicationName: shtong-gateway
+  flyway:
+    enabled: true
+    user: ${SHTONG_MIGRATION_DATABASE_USER}
+    password: ${SHTONG_MIGRATION_DATABASE_PASSWORD}
+    locations: classpath:db/migration
+    validate-migration-naming: true
+    clean-disabled: true
+    connect-retries: 10
+shtong:
+  persistence-mode: postgres
+  dev-mode: false
+  state-encryption-key: ${SHTONG_STATE_ENCRYPTION_KEY}

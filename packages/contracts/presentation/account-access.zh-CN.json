@@ -1,0 +1,36 @@
+{
+  "labels": {
+    "USER": "普通用户", "TEACHER_ADMIN": "教师/辅导员", "STUDENT_ADMIN": "学生管理员", "MEDICAL_INSURANCE_ADMIN": "医保系统管理员", "SYSTEM_ADMIN": "系统管理员",
+    "MALE": "男", "FEMALE": "女", "OTHER": "其他",
+    "SCHOOL": "学校", "COLLEGE": "学院", "GRADE": "年级", "CLASS": "班级",
+    "ACTIVE": "正常", "INACTIVE": "已停用", "GRADUATED": "已毕业", "DELETED": "已删除", "NORMAL": "正常", "TEMPORARILY_LOCKED": "暂时锁定", "LOCKED": "已锁定", "REVOKED": "已取消",
+    "PENDING": "等待处理", "PENDING_APPROVAL": "等待另一位管理员确认", "RUNNING": "处理中", "READY": "可下载", "COMPLETED": "已完成", "FAILED": "失败", "EXPIRED": "已过期", "APPROVED": "已同意", "REJECTED": "已拒绝", "EXECUTED": "已执行", "INVALIDATED": "已失效",
+    "UPLOADED": "文件已上传", "VALIDATING": "正在检查", "VALID": "检查通过", "INVALID": "需要修改", "COMMITTED": "导入完成",
+    "SUCCESS": "成功", "DENIED": "已拒绝", "ALLOW": "允许", "DENY": "拒绝", "NOT_APPLICABLE": "无需判断", "PARTIAL": "部分完成", "RELEASED": "已发放", "DELIVERY_UNKNOWN": "交付结果待确认",
+    "RESET": "重置密码", "RESET_SYSTEM_ADMIN": "重置管理员密码", "DELETE_ACCOUNTS": "删除账户", "ASSIGN_SYSTEM_ADMIN": "设置系统管理员", "REVOKE_SYSTEM_ADMIN": "取消系统管理员", "AUDIT_EXPORT": "导出操作记录",
+    "WEB_ADMIN": "网页管理端", "WEB_USER": "网页用户端", "ANDROID": "安卓客户端", "IOS": "苹果客户端", "ADMIN": "管理工作台", "AAL1": "密码验证", "AAL2": "二次验证",
+    "accounts": "账户信息", "role_assignments": "账户身份", "assignment_scopes": "管理范围", "row_key": "关联编号", "login_name": "登录账号", "display_name": "姓名", "person_no": "学工号", "class_code": "所属班级", "role_code": "身份", "org_unit_code": "管理范围", "file": "文件", "sheet": "工作表",
+    "resourceType": "对象类型", "resourceId": "对象编号", "type": "类型", "id": "编号", "field": "项目", "before": "修改前", "after": "修改后", "capability": "操作权限", "roleCode": "身份", "workspace": "工作区", "decision": "校验结果", "reasonCode": "原因", "policyVersion": "规则版本", "authorizationVersion": "权限版本", "orgUnitId": "组织编号",
+    "AUTH.LOGIN.ATTEMPTED": "尝试登录", "AUTH.LOGIN.SUCCEEDED": "登录成功", "AUTH.LOGIN.FAILED": "登录失败", "AUTH.MFA.SUCCEEDED": "身份验证成功", "AUTH.MFA.FAILED": "身份验证失败", "AUTH.TOKEN.REFRESHED": "登录有效期已续期", "AUTH.TOKEN.REFRESH_FAILED": "登录续期失败",
+    "AUTH.PASSWORD.CHANGE_REQUIRED": "要求修改初始密码", "AUTH.PASSWORD.CHANGED": "修改密码", "AUTH.PASSWORD.CHANGE_FAILED": "修改密码失败", "AUTH.PASSWORD.RESET": "重置密码", "AUTH.LOGOUT.SUCCEEDED": "退出登录", "AUTH.LOGOUT.FAILED": "退出登录失败",
+    "SESSION.REVOKED": "登录已失效", "SESSION.REVOKED_TOKEN_USED": "使用失效的登录凭证", "SESSION.CONTEXT_SWITCHED": "进入工作台", "SESSION.CONTEXT_SWITCH_FAILED": "进入工作台失败", "PROFILE.VIEWED": "查看个人资料", "PROFILE.UPDATED": "修改个人资料", "PROFILE.SENSITIVE_FIELD.REVEALED": "验证并复制敏感资料",
+    "ACCOUNT.SEARCHED": "查询账户", "ACCOUNT.DETAIL_VIEWED": "查看账户详情", "ACCOUNT.CREATED": "新增账户", "ACCOUNT.UPDATED": "更正账户资料", "ACCOUNT.ENROLLMENT_CHANGED": "办理学籍变动", "ACCOUNT.IMPORT_VALIDATION.REQUESTED": "上传导入名单", "ACCOUNT.IMPORT_VALIDATION.SUCCEEDED": "导入名单检查通过", "ACCOUNT.IMPORT_VALIDATION.FAILED": "导入名单检查失败", "ACCOUNT.IMPORT.COMMITTED": "批量导入账户", "ACCOUNT.IMPORT.COMMIT_FAILED": "导入账户失败", "ACCOUNT.IMPORT_RESULT.DOWNLOADED": "下载导入账户的初始密码",
+    "ACCOUNT.EXPORT.REQUESTED": "申请导出账户", "ACCOUNT.EXPORT.COMPLETED": "账户导出文件已生成", "ACCOUNT.EXPORT.FAILED": "导出账户失败", "ACCOUNT.EXPORT.DOWNLOADED": "下载账户名单", "ACCOUNT.DELETED": "删除账户", "ACCOUNT.GRADUATED": "移入毕业生账户",
+    "AUTHZ.ROLE.ASSIGNED": "添加账户身份", "AUTHZ.ROLE.REVOKED": "取消账户身份", "AUTHZ.SCOPE_CEILING.CHANGED": "调整管理范围", "AUTHZ.GRANT.CREATED": "添加操作权限", "AUTHZ.GRANT.REVOKED": "取消操作权限",
+    "CONTROL.REQUESTED": "提交管理员复核", "CONTROL.APPROVED": "同意复核申请", "CONTROL.REJECTED": "拒绝复核申请", "CONTROL.EXPIRED": "复核申请过期", "CONTROL.EXECUTED": "执行已确认的操作",
+    "ORGANIZATION.SEARCHED": "查询学校与班级", "ORGANIZATION.CREATED": "新增学校组织", "ORGANIZATION.UPDATED": "修改学校组织", "ORGANIZATION.DELETED": "删除学校组织", "AUDIT.SEARCHED": "查询操作记录", "AUDIT.DETAIL_VIEWED": "查看操作详情", "AUDIT.EXPORT.REQUESTED": "申请导出操作记录", "AUDIT.EXPORT.DOWNLOADED": "下载操作记录",
+    "MODULE.SSO.TICKET_ISSUED": "进入医保信息系统", "MODULE.SSO.TICKET_EXCHANGED": "医保系统完成统一登录", "MODULE.SSO.SESSION_INTROSPECTED": "校验医保统一会话", "MODULE.SSO.SESSION_REVOKED": "撤销医保统一会话", "MODULE.SSO.REJECTED": "医保统一登录被拒绝"
+  },
+  "errors": {
+    "IMPORT_REVALIDATION_REQUIRED": "名单检查后组织或数据发生了变化，请重新上传检查。", "SELF_OPERATION_FORBIDDEN": "不能对自己的账户执行此操作，请取消勾选自己。", "GRADUATE_ROLE_CONFLICT": "所选账户仍有教师、学生管理员或系统管理员身份，请先核实并取消这些身份后再办理毕业。", "AUTHENTICATION_REQUIRED": "请先登录后再操作。", "AUTHORIZATION_VERSION_STALE": "账户权限已变化，请重新登录。", "PASSWORD_CHANGE_REQUIRED": "请先修改初始密码再进入工作台。", "MFA_INVALID": "验证码不正确或已过期，请重新输入。",
+    "VALIDATION_FAILED": "填写内容不符合要求，请检查必填项和选择内容。", "DUPLICATE": "该账号、学工号或组织编号已存在，请更换后再提交。", "DUPLICATE_LOGIN_NAME": "登录账号已存在，请更换。", "DUPLICATE_PERSON_NO": "学工号已存在，请检查是否重复创建。",
+    "ACCESS_DENIED": "当前账户没有操作权限，或正在修改自己的受保护身份。", "STEP_UP_REQUIRED": "需要重新验证管理员身份，请退出后重新登录。", "SESSION_REVOKED": "登录已失效，请重新登录。", "UNAUTHENTICATED": "请先登录后再操作。", "INVALID_CREDENTIALS": "账号或密码不正确，请重新输入。",
+    "ORGANIZATION_IN_USE": "该组织仍有下级组织、在用账户或管理权限，暂时不能删除。", "VERSION_CONFLICT": "数据已被更新，请刷新页面后重试。", "ROLE_SCOPE_TYPE_INVALID": "管理范围不符合身份要求：教师/辅导员请选择年级；学生管理员可选择学院、年级或班级。", "ROLE_SCOPE_REQUIRED": "请至少选择一个管理范围。",
+    "CONTROL_REQUEST_STALE": "申请所涉及的数据已变化或申请已处理，请刷新后重新发起。", "SEPARATION_OF_DUTIES_VIOLATION": "发起人和操作涉及的本人不能确认，请由另一位管理员处理。", "LAST_SYSTEM_ADMIN_PROTECTED": "必须保留至少一位系统管理员。", "EXPORT_SELECTION_CHANGED": "账户数量已变化，请刷新并重新确认导出数量。",
+    "RESOURCE_NOT_FOUND": "记录不存在、已过期或文件已下载，请刷新页面确认。", "PASSWORD_POLICY_VIOLATION": "密码至少 8 位，并同时包含大写字母、小写字母和数字。", "PASSWORD_REUSED": "不能使用最近用过的密码，请设置新密码。", "PROFILE_COMPLETION_REQUIRED": "请先完善身份证号、手机号和地址信息后再进入工作台。", "PROFILE_ALREADY_COMPLETED": "个人资料已经完善，无需重复提交。", "DUPLICATE_ID_CARD": "该身份证号已被其他账户使用，请联系系统管理员核对。", "SENSITIVE_REAUTHENTICATION_FAILED": "密码验证失败，未复制敏感资料。", "REFERENCE_DATA_UNAVAILABLE": "国家地名信息库暂时不可用，请稍后重试。", "AUDIT_UNAVAILABLE": "操作记录暂时无法保存，本次操作未完成，请稍后重试。", "CSRF_VALIDATION_FAILED": "页面验证已失效，请刷新并重新登录。", "CONTRACT_VERSION_MISMATCH": "页面版本已更新，请刷新页面后重试。", "RATE_LIMITED": "操作过于频繁，请稍后再试。", "NETWORK_ERROR": "无法连接服务器，请检查网络后重试。", "SSO_TICKET_INVALID": "医保入口已失效，请从工作台重新进入。", "SSO_ADAPTER_UNAUTHORIZED": "医保系统接入未获授权。"
+  },
+  "importIssues": {
+    "REQUIRED": "此项不能为空。", "DUPLICATE": "内容重复，请检查文件和已有账户。", "INVALID": "填写内容不正确，请对照模板中的示例修改。", "UNKNOWN_ROW": "找不到对应的账户行，请检查关联编号。", "UNKNOWN_ROLE_ASSIGNMENT": "请先为该账户填写对应身份。", "UNKNOWN_ORG": "找不到有效的组织，请从组织对照表中选择。", "AMBIGUOUS_ORG": "存在多个同名组织，请填写组织对照表中的完整名称或编号。", "CLASS_REQUIRED": "普通用户必须填写一个有效班级。", "ROLE_SCOPE_TYPE_INVALID": "教师/辅导员只能管理年级；学生管理员可管理学院、年级或班级。", "ROW_LIMIT_EXCEEDED": "一次最多导入5000个账户，请拆分文件。", "INVALID_FILE": "请选择不超过10MB的模板表格文件。", "MISSING_SHEET": "缺少必需的工作表，请重新下载模板。", "INVALID_HEADERS": "表头已改变，请恢复官方模板表头。", "EMPTY_FILE": "没有账户数据，请从第二行开始填写。", "FORMULA_FORBIDDEN": "请粘贴为纯文本，不要使用公式。", "EXTERNAL_LINKS_FORBIDDEN": "文件包含外部链接，请使用新模板粘贴纯文本。", "HIDDEN_DATA_FORBIDDEN": "请取消隐藏数据行、列或工作表后重新上传。", "UNREADABLE": "无法读取文件，请确认是未损坏的表格文件。"
+  },
+  "template": {"version":"v3-zh", "sheet":"账户名单", "headers":["登录账号","姓名","学工号","性别","所属班级","身份","管理范围"]}
+}

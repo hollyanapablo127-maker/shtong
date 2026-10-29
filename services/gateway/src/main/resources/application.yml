@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+spring:
+  application:
+    name: shtong-gateway
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  profiles:
+    default: development
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+shtong:
+  environment: ${SHTONG_ENVIRONMENT:development}
+  dev-mode: ${SHTONG_DEV_MODE:false}
+  bootstrap-secret: ${SHTONG_BOOTSTRAP_SECRET:}
+  cookie-secure: ${SHTONG_COOKIE_SECURE:true}
+  refresh-token-pepper: ${SHTONG_REFRESH_TOKEN_PEPPER:}
+  csrf-cookie-secure: ${SHTONG_COOKIE_SECURE:true}
+  persistence-mode: ${SHTONG_PERSISTENCE_MODE:memory}
+  administrative-division-url: ${SHTONG_ADMINISTRATIVE_DIVISION_URL:https://dmfw.mca.gov.cn/9095/xzqh/getList}
+  sso:
+    adapter-id: ${SHTONG_SSO_ADAPTER_ID:medical-insurance}
+    # Fail closed when the server-to-server secret was not injected.
+    adapter-secret: ${SHTONG_SSO_ADAPTER_SECRET:}
+  medical-insurance:
+    lifecycle-projection-url: ${SHTONG_MEDICAL_INSURANCE_LIFECYCLE_PROJECTION_URL:}
+    entry-url: ${SHTONG_MEDICAL_INSURANCE_ENTRY_URL:/medical-insurance/sso/callback/?embedded=1}
+    mobile-entry-url: ${SHTONG_MEDICAL_INSURANCE_MOBILE_ENTRY_URL:}

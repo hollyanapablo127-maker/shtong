@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract": "shtong.capabilities.account-access-baseline",
+  "version": "1.0.0",
+  "status": "frozen-for-phase-1",
+  "roles": [
+    {
+      "code": "USER",
+      "workspace": "USER",
+      "displayNameKey": "role.user",
+      "assignmentScopeCeiling": {"mode": "IMPLICIT_SELF"}
+    },
+    {
+      "code": "TEACHER_ADMIN",
+      "workspace": "ADMIN",
+      "displayNameKey": "role.teacherAdmin",
+      "assignmentScopeCeiling": {
+        "mode": "REQUIRED_ORG_SUBTREE",
+        "allowedOrgUnitTypes": ["GRADE"],
+        "minimumSelections": 1
+      }
+    },
+    {
+      "code": "STUDENT_ADMIN",
+      "workspace": "ADMIN",
+      "displayNameKey": "role.studentAdmin",
+      "assignmentScopeCeiling": {
+        "mode": "REQUIRED_ORG_SUBTREE",
+        "allowedOrgUnitTypes": ["COLLEGE", "GRADE", "CLASS"],
+        "minimumSelections": 1
+      }
+    },
+    {
+      "code": "MEDICAL_INSURANCE_ADMIN",
+      "workspace": "ADMIN",
+      "displayNameKey": "role.medicalInsuranceAdmin",
+      "assignmentScopeCeiling": {
+        "mode": "REQUIRED_ORG_SUBTREE",
+        "allowedOrgUnitTypes": ["COLLEGE", "GRADE", "CLASS"],
+        "minimumSelections": 1,
+        "scopeCombination": "ARBITRARY_UNION"
+      }
+    },
+    {
+      "code": "SYSTEM_ADMIN",
+      "workspace": "SYSTEM_ADMIN",
+      "displayNameKey": "role.systemAdmin",
+      "assignmentScopeCeiling": {"mode": "IMPLICIT_SYSTEM_GLOBAL"}
+    }
+  ],
+  "capabilities": [
+    {"code": "profile.read", "resourceType": "PROFILE", "action": "READ", "risk": "LOW", "scopeResolver": "SELF_RESOURCE", "profile": "GENERAL"},
+    {"code": "credential.password.change", "resourceType": "CREDENTIAL", "action": "CHANGE_PASSWORD", "risk": "MEDIUM", "scopeResolver": "SELF_RESOURCE", "profile": "GENERAL"},
+    {"code": "session.logout", "resourceType": "SESSION", "action": "LOGOUT", "risk": "LOW", "scopeResolver": "SELF_RESOURCE", "profile": "GENERAL"},
+    {"code": "account.read", "resourceType": "ACCOUNT", "action": "READ", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL"},
+    {"code": "account.create", "resourceType": "ACCOUNT", "action": "CREATE", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.update", "resourceType": "ACCOUNT", "action": "UPDATE", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.enrollment.change", "resourceType": "ACCOUNT", "action": "CHANGE_ENROLLMENT", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.import", "resourceType": "ACCOUNT_IMPORT", "action": "IMPORT", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.export", "resourceType": "ACCOUNT_EXPORT", "action": "EXPORT", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.password.reset", "resourceType": "CREDENTIAL", "action": "RESET_PASSWORD", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.delete", "resourceType": "ACCOUNT", "action": "DELETE_LOGICALLY", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "account.graduate", "resourceType": "ACCOUNT", "action": "GRADUATE", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "authorization.read", "resourceType": "AUTHORIZATION", "action": "READ", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL"},
+    {"code": "authorization.grant", "resourceType": "AUTHORIZATION", "action": "GRANT", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "authorization.revoke", "resourceType": "AUTHORIZATION", "action": "REVOKE", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "control.read", "resourceType": "SECURITY_CONTROL_REQUEST", "action": "READ", "risk": "HIGH", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "control.approve", "resourceType": "SECURITY_CONTROL_REQUEST", "action": "DECIDE", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "organization.read", "resourceType": "ORG_UNIT", "action": "READ", "risk": "MEDIUM", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL"},
+    {"code": "organization.manage", "resourceType": "ORG_UNIT", "action": "MANAGE", "risk": "CRITICAL", "scopeResolver": "SYSTEM_RESOURCE", "profile": "GENERAL", "stepUpRequired": false},
+    {"code": "audit.search", "resourceType": "AUDIT_EVENT", "action": "SEARCH", "risk": "HIGH", "scopeResolver": "AUDIT_SUBJECT", "profile": "AUDIT_QUERY", "stepUpRequired": false},
+    {"code": "audit.detail.read", "resourceType": "AUDIT_EVENT", "action": "READ_DETAIL", "risk": "HIGH", "scopeResolver": "AUDIT_SUBJECT", "profile": "AUDIT_QUERY", "stepUpRequired": false},
+    {"code": "audit.export", "resourceType": "AUDIT_EXPORT", "action": "EXPORT", "risk": "CRITICAL", "scopeResolver": "AUDIT_SUBJECT", "profile": "AUDIT_QUERY", "stepUpRequired": false}
+    ,{"code": "module.medical-insurance.access", "resourceType": "MODULE", "action": "ENTER", "risk": "HIGH", "scopeResolver": "MODULE_SSO", "profile": "GENERAL"}
+  ],
+  "roleCapabilityCeilings": {
+    "USER": ["profile.read", "credential.password.change", "session.logout", "module.medical-insurance.access"],
+    "TEACHER_ADMIN": ["profile.read", "credential.password.change", "session.logout"],
+    "STUDENT_ADMIN": ["profile.read", "credential.password.change", "session.logout"],
+    "MEDICAL_INSURANCE_ADMIN": ["profile.read", "credential.password.change", "session.logout", "module.medical-insurance.access"],
+    "SYSTEM_ADMIN": [
+      "profile.read",
+      "credential.password.change",
+      "session.logout",
+      "account.read",
+      "account.create",
+      "account.update",
+      "account.enrollment.change",
+      "account.import",
+      "account.export",
+      "account.password.reset",
+      "account.delete",
+      "account.graduate",
+      "authorization.read",
+      "authorization.grant",
+      "authorization.revoke",
+      "control.read",
+      "control.approve",
+      "organization.read",
+      "organization.manage",
+      "audit.search",
+      "audit.detail.read",
+      "audit.export",
+      "module.medical-insurance.access"
+    ]
+  },
+  "baselineGrantTemplates": [
+    {
+      "code": "SELF_SERVICE_V1",
+      "applicableRoles": ["USER", "TEACHER_ADMIN", "STUDENT_ADMIN", "MEDICAL_INSURANCE_ADMIN", "SYSTEM_ADMIN"],
+      "capabilities": ["profile.read", "credential.password.change", "session.logout"],
+      "scopeDimension": "GENERAL",
+      "scopeType": "SELF"
+    },
+    {
+      "code": "SYSTEM_ACCOUNT_MANAGEMENT_V1",
+      "applicableRoles": ["SYSTEM_ADMIN"],
+      "capabilities": [
+        "account.read",
+        "account.create",
+        "account.update",
+        "account.enrollment.change",
+        "account.import",
+        "account.export",
+        "account.password.reset",
+        "account.delete",
+        "account.graduate",
+        "authorization.read",
+        "authorization.grant",
+        "authorization.revoke",
+        "control.read",
+        "control.approve",
+        "organization.read",
+        "organization.manage"
+      ],
+      "scopeDimension": "GENERAL",
+      "scopeType": "GLOBAL",
+      "resourceDomain": "SYSTEM_MANAGEMENT_ONLY"
+    },
+    {
+      "code": "SYSTEM_AUDIT_REVIEW_V1",
+      "applicableRoles": ["SYSTEM_ADMIN"],
+      "capabilities": ["audit.search", "audit.detail.read", "audit.export"],
+      "scopeDimension": "ACTOR",
+      "scopeType": "GLOBAL",
+      "resourceDomain": "SYSTEM_BASELINE_EVENTS_ONLY",
+      "fieldClearances": ["METADATA", "IDENTITY_MASKED", "CHANGE_SUMMARY", "AUTHORIZATION_EVIDENCE"],
+      "requiresStepUp": false,
+      "exportRequiresTwoPersonControl": true
+    },
+    {
+      "code": "MEDICAL_INSURANCE_SSO_V1",
+      "applicableRoles": ["USER", "MEDICAL_INSURANCE_ADMIN", "SYSTEM_ADMIN"],
+      "capabilities": ["module.medical-insurance.access"],
+      "scopeDimension": "MODULE",
+      "scopeType": "SHTONG_AUTHORIZATION",
+      "resourceDomain": "YIBAO_EXTERNAL_SYSTEM",
+      "externalRoleMapping": {"USER": "student", "MEDICAL_INSURANCE_ADMIN": "admin", "SYSTEM_ADMIN": "super_admin"}
+    }
+  ],
+  "invariants": [
+    "Assignment scope ceilings never grant a module business capability.",
+    "Every future module grant binds capabilities and grant scopes in the same immutable grant.",
+    "Every ADMIN grant scope is a subset of the owning assignment scope ceiling.",
+    "SYSTEM_ADMIN global scope applies only to registered system resources, never future business resources."
+  ]
+}

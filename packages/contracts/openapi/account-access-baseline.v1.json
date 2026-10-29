@@ -1,0 +1,745 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "生化通第一阶段账户与权限 API",
+    "version": "1.0.0",
+    "description": "服务端、Web、Android 与 iOS 的开发前事实契约；微信小程序不在本版本范围。",
+    "license": {"name": "Proprietary", "identifier": "LicenseRef-Proprietary"}
+  },
+  "servers": [{"url": "/v1"}],
+  "security": [{"bearerAuth": []}, {"sessionCookie": []}],
+  "tags": [
+    {"name": "Authentication", "description": "登录、改密、上下文和退出"},
+    {"name": "Profile", "description": "本人资料"},
+    {"name": "Accounts", "description": "系统管理员账户查询与命令"},
+    {"name": "Import", "description": "账户模板、预检与导入提交"},
+    {"name": "Export", "description": "账户导出任务与下载票据"},
+    {"name": "Authorization", "description": "角色与管辖上限"},
+    {"name": "Organization", "description": "学校、学院、年级和班级"},
+    {"name": "Audit", "description": "审计查询、详情与导出"},
+    {"name": "Module SSO", "description": "外部模块统一登录适配"}
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "login",
+        "summary": "登录",
+        "security": [],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LoginRequest"}}}},
+        "responses": {"200": {"description": "认证结果", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LoginResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/auth/token/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "refreshSessionToken",
+        "summary": "轮换 refresh token 并刷新会话",
+        "security": [],
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenRefreshRequest"}}}},
+        "responses": {"200": {"description": "轮换后的会话和移动端 token", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SessionEstablished"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/auth/password/change": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "changePassword",
+        "summary": "修改密码",
+        "x-capability": "credential.password.change",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PasswordChangeRequest"}}}},
+        "responses": {"200": {"description": "新会话", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SessionEstablished"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "logout",
+        "summary": "退出当前会话",
+        "x-capability": "session.logout",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"204": {"description": "当前会话已撤销"}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/modules/medical-insurance/sso/ticket": {
+      "post": {
+        "tags": ["Module SSO"],
+        "operationId": "issueMedicalInsuranceTicket",
+        "summary": "签发医保信息系统一次性进入票据",
+        "x-capability": "module.medical-insurance.access",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"200": {"description": "短期一次性模块入口", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MedicalInsuranceSsoTicket"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/modules/medical-insurance/sso/exchange": {
+      "post": {
+        "tags": ["Module SSO"],
+        "operationId": "exchangeMedicalInsuranceTicket",
+        "summary": "由医保适配层兑换一次性票据",
+        "security": [],
+        "parameters": [
+          {"$ref": "#/components/parameters/SsoAdapterId"},
+          {"$ref": "#/components/parameters/SsoAdapterSecret"}
+        ],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoExchangeRequest"}}}},
+        "responses": {"200": {"description": "已校验的账户与会话投影", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoSessionProjection"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/modules/medical-insurance/sso/introspect": {
+      "post": {
+        "tags": ["Module SSO"],
+        "operationId": "introspectMedicalInsuranceSession",
+        "summary": "校验医保模块对应的生化通会话",
+        "security": [],
+        "parameters": [
+          {"$ref": "#/components/parameters/SsoAdapterId"},
+          {"$ref": "#/components/parameters/SsoAdapterSecret"}
+        ],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoIntrospectRequest"}}}},
+        "responses": {"200": {"description": "当前有效会话投影", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoSessionProjection"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/modules/medical-insurance/sso/revoke": {
+      "post": {
+        "tags": ["Module SSO"],
+        "operationId": "revokeMedicalInsuranceSession",
+        "summary": "由医保模块撤销对应的生化通会话",
+        "security": [],
+        "parameters": [
+          {"$ref": "#/components/parameters/SsoAdapterId"},
+          {"$ref": "#/components/parameters/SsoAdapterSecret"}
+        ],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoIntrospectRequest"}}}},
+        "responses": {"200": {"description": "撤销结果", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SsoRevokeResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/modules/medical-insurance/internal/review-subject": {"post":{"tags":["Module SSO"],"operationId":"getMedicalReviewSubject","summary":"医保自动审核读取所属账户当前可信资料","security":[],"parameters":[{"$ref":"#/components/parameters/SsoAdapterId"},{"$ref":"#/components/parameters/SsoAdapterSecret"}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["accountId"],"properties":{"accountId":{"$ref":"#/components/schemas/Id"}}}}}},"responses":{"200":{"description":"医保自动审核读取所属账户当前可信资料","content":{"application/json":{"schema":{"type":"object","required":["accountId","lifecycleStatus","authorizationVersion","displayName","idCardNumber"],"properties":{"accountId":{"$ref":"#/components/schemas/Id"},"lifecycleStatus":{"$ref":"#/components/schemas/AccountLifecycleStatus"},"authorizationVersion":{"type":"integer"},"version":{"type":"integer"},"displayName":{"type":"string"},"idCardNumber":{"type":["string","null"]},"student":{"type":["object","null"]}}}}}},"4XX":{"$ref":"#/components/responses/Error"},"default":{"$ref":"#/components/responses/Error"}}}},
+    "/modules/medical-insurance/internal/divisions": {"post":{"tags":["Module SSO"],"operationId":"getMedicalReviewDivisions","summary":"医保审核复用权威行政区划","security":[],"parameters":[{"$ref":"#/components/parameters/SsoAdapterId"},{"$ref":"#/components/parameters/SsoAdapterSecret"}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["level"],"properties":{"level":{"type":"string","enum":["PROVINCE","CITY","DISTRICT"]},"parentCode":{"type":["string","null"],"pattern":"^[0-9]{12}$"}}}}}},"responses":{"200":{"description":"医保审核复用权威行政区划","content":{"application/json":{"schema":{"type":"object","properties":{"items":{"type":"array","items":{"$ref":"#/components/schemas/AdministrativeDivision"}}}}}}},"4XX":{"$ref":"#/components/responses/Error"},"default":{"$ref":"#/components/responses/Error"}}}},
+    "/session/bootstrap": {
+      "get": {
+        "tags": ["Authentication"],
+        "operationId": "getSessionBootstrap",
+        "summary": "获取当前会话启动信息",
+        "responses": {"200": {"description": "当前上下文与模块", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BootstrapResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/session/context": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "switchSessionContext",
+        "summary": "切换工作区上下文",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ContextSwitchRequest"}}}},
+        "responses": {"200": {"description": "新工作区上下文", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SessionEstablished"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": ["Profile"],
+        "operationId": "getProfile",
+        "summary": "读取本人资料",
+        "x-capability": "profile.read",
+        "responses": {"200": {"description": "本人资料", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/profile/completion": {
+      "post": {
+        "tags": ["Profile"], "operationId": "completeRequiredProfile", "summary": "首次完善普通用户必填资料", "x-capability": "profile.update",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ProfileCompletionRequest"}}}},
+        "responses": {"200": {"description": "资料与解除限制后的新会话", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ProfileCompletionResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/profile/sensitive-fields/{field}/reveal": {
+      "post": {
+        "tags": ["Profile"], "operationId": "revealSensitiveProfileField", "summary": "密码复核后一次性读取本人敏感字段", "x-capability": "profile.read",
+        "parameters": [{"name":"field","in":"path","required":true,"schema":{"type":"string","enum":["ID_CARD_NUMBER","MOBILE_NUMBER","CURRENT_ADDRESS","HOUSEHOLD_ADDRESS"]}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SensitiveFieldRevealRequest"}}}},
+        "responses": {"200": {"description": "仅供本次复制的字段明文", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SensitiveFieldRevealResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/reference/administrative-divisions": {
+      "get": {
+        "tags": ["Profile"], "operationId": "listAdministrativeDivisions", "summary": "读取国家地名信息库省市区选项",
+        "parameters": [{"name":"level","in":"query","required":true,"schema":{"type":"string","enum":["PROVINCE","CITY","DISTRICT"]}},{"name":"parentCode","in":"query","schema":{"type":"string","pattern":"^[0-9]{12}$"}}],
+        "responses": {"200": {"description": "行政区划选项", "content": {"application/json": {"schema": {"type":"array","items":{"$ref":"#/components/schemas/AdministrativeDivision"}}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts": {
+      "get": {
+        "tags": ["Accounts"],
+        "operationId": "listAccounts",
+        "summary": "分页查询账户",
+        "x-capability": "account.read",
+        "parameters": [
+          {"name": "q", "in": "query", "schema": {"type": "string", "maxLength": 100}},
+          {"name": "lifecycleStatus", "in": "query", "description": "省略或空值时仅查询 ACTIVE；毕业生页面显式传 GRADUATED。", "schema": {"$ref": "#/components/schemas/AccountLifecycleStatus"}},
+          {"name": "roleCode", "in": "query", "schema": {"$ref": "#/components/schemas/RoleCode"}},
+          {"name": "orgUnitId", "in": "query", "schema": {"$ref": "#/components/schemas/Id"}},
+          {"$ref": "#/components/parameters/Cursor"},
+          {"$ref": "#/components/parameters/Limit"}
+        ],
+        "responses": {"200": {"description": "账户分页", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountPage"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      },
+      "post": {
+        "tags": ["Accounts"],
+        "operationId": "createAccount",
+        "summary": "创建单个账户",
+        "x-capability": "account.create",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountCreateRequest"}}}},
+        "responses": {"201": {"description": "已创建；临时密码最多交付一次", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountCreateResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts/{accountId}": {
+      "get": {
+        "tags": ["Accounts"],
+        "operationId": "getAccount",
+        "summary": "读取账户详情",
+        "x-capability": "account.read",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}],
+        "responses": {"200": {"description": "账户详情", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountDetail"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      },
+      "patch": {
+        "tags": ["Accounts"],
+        "operationId": "updateAccount",
+        "summary": "更正账户基本信息（学工号不可修改）",
+        "x-capability": "account.update",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountUpdateRequest"}}}},
+        "responses": {"200": {"description": "更正后的账户", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountDetail"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts/{accountId}/enrollment-change": {
+      "post": {
+        "tags": ["Accounts"],
+        "operationId": "changeStudentEnrollment",
+        "summary": "办理学生学籍变动",
+        "x-capability": "account.enrollment.change",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EnrollmentChangeRequest"}}}},
+        "responses": {"200": {"description": "变动后的账户", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountDetail"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts/{accountId}/authorization": {
+      "get": {
+        "tags": ["Authorization"],
+        "operationId": "getAccountAuthorization",
+        "summary": "读取账户授权摘要",
+        "x-capability": "authorization.read",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}],
+        "responses": {"200": {"description": "角色与管辖上限", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountAuthorization"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts/commands/reset-password": {"$ref": "#/components/pathItems/ResetPasswordCommand"},
+    "/system/accounts/commands/delete": {"$ref": "#/components/pathItems/DeleteCommand"},
+    "/system/accounts/commands/graduate": {"$ref": "#/components/pathItems/GraduateCommand"},
+    "/system/account-commands/{commandId}": {
+      "get": {
+        "tags": ["Accounts"],
+        "operationId": "getAccountCommand",
+        "summary": "读取账户命令状态",
+        "parameters": [{"$ref": "#/components/parameters/CommandId"}],
+        "responses": {"200": {"description": "命令状态", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobStatus"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-commands/{commandId}/credential-ticket": {
+      "post": {
+        "tags": ["Accounts"],
+        "operationId": "createResetCredentialTicket",
+        "summary": "签发重置密码结果下载票据",
+        "x-capability": "account.password.reset",
+        "parameters": [{"$ref": "#/components/parameters/CommandId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"200": {"description": "一次性下载票据", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/DownloadTicket"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/template": {
+      "get": {
+        "tags": ["Import"],
+        "operationId": "downloadAccountImportTemplate",
+        "summary": "下载账户导入模板",
+        "x-capability": "account.import",
+        "responses": {"200": {"description": "官方 xlsx 模板", "content": {"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {"schema": {"type": "string", "contentEncoding": "binary"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/jobs": {
+      "post": {
+        "tags": ["Import"],
+        "operationId": "createAccountImportValidationJob",
+        "summary": "上传账户文件并创建预检任务",
+        "x-capability": "account.import",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"multipart/form-data": {"schema": {"type": "object", "required": ["file"], "properties": {"file": {"type": "string", "contentEncoding": "binary"}}}}}},
+        "responses": {"202": {"description": "校验任务", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/jobs/{jobId}": {
+      "get": {
+        "tags": ["Import"],
+        "operationId": "getAccountImportJob",
+        "summary": "读取账户导入任务",
+        "x-capability": "account.import",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}],
+        "responses": {"200": {"description": "导入任务状态", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ImportJob"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/jobs/{jobId}/errors": {
+      "get": {
+        "tags": ["Import"],
+        "operationId": "listAccountImportErrors",
+        "summary": "分页读取导入错误",
+        "x-capability": "account.import",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}, {"$ref": "#/components/parameters/Cursor"}, {"$ref": "#/components/parameters/Limit"}],
+        "responses": {"200": {"description": "逐行错误", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ImportErrorPage"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/jobs/{jobId}/commit": {
+      "post": {
+        "tags": ["Import"],
+        "operationId": "commitAccountImport",
+        "summary": "确认提交账户导入",
+        "x-capability": "account.import",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ImportCommitRequest"}}}},
+        "responses": {"202": {"description": "提交已接受", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-import/jobs/{jobId}/credential-ticket": {
+      "post": {
+        "tags": ["Import"],
+        "operationId": "createImportCredentialTicket",
+        "summary": "签发导入临时密码下载票据",
+        "x-capability": "account.password.reset",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"200": {"description": "一次性下载票据", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/DownloadTicket"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-export/jobs": {
+      "post": {
+        "tags": ["Export"],
+        "operationId": "createAccountExportJob",
+        "summary": "创建账户导出任务",
+        "x-capability": "account.export",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccountExportRequest"}}}},
+        "responses": {"202": {"description": "导出任务", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/account-export/jobs/{jobId}": {"$ref": "#/components/pathItems/GetExportJob"},
+    "/system/account-export/jobs/{jobId}/download-ticket": {"$ref": "#/components/pathItems/CreateExportDownloadTicket"},
+    "/system/roles": {
+      "get": {
+        "tags": ["Authorization"],
+        "operationId": "listRoles",
+        "summary": "读取内置角色模板",
+        "x-capability": "authorization.read",
+        "responses": {"200": {"description": "内置角色模板", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/RoleTemplate"}}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/accounts/{accountId}/role-assignments": {
+      "get": {
+        "tags": ["Authorization"],
+        "operationId": "listRoleAssignments",
+        "summary": "读取账户角色赋予",
+        "x-capability": "authorization.read",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}],
+        "responses": {"200": {"description": "账户角色赋予", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/RoleAssignment"}}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      },
+      "post": {
+        "tags": ["Authorization"],
+        "operationId": "createRoleAssignment",
+        "summary": "创建账户角色赋予",
+        "x-capability": "authorization.grant",
+        "parameters": [{"$ref": "#/components/parameters/AccountId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/RoleAssignmentCreateRequest"}}}},
+        "responses": {"201": {"description": "普通角色赋予已创建", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/RoleAssignment"}}}}, "202": {"description": "高风险角色赋予等待另一名系统管理员批准", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlPendingResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/role-assignments/{assignmentId}/revoke": {
+      "post": {
+        "tags": ["Authorization"],
+        "operationId": "revokeRoleAssignment",
+        "summary": "撤销账户角色赋予",
+        "x-capability": "authorization.revoke",
+        "parameters": [{"$ref": "#/components/parameters/AssignmentId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ReasonRequest"}}}},
+        "responses": {"204": {"description": "普通角色赋予已撤销"}, "202": {"description": "高风险撤销等待另一名系统管理员批准", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlPendingResponse"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/control-requests": {
+      "get": {
+        "tags": ["Authorization"],
+        "operationId": "listSecurityControlRequests",
+        "summary": "分页读取双人安全控制请求",
+        "x-capability": "control.read",
+        "parameters": [
+          {"name": "state", "in": "query", "schema": {"$ref": "#/components/schemas/ControlRequestState"}},
+          {"$ref": "#/components/parameters/Cursor"},
+          {"$ref": "#/components/parameters/Limit"}
+        ],
+        "responses": {"200": {"description": "控制请求分页", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlRequestPage"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/control-requests/{controlRequestId}": {
+      "get": {
+        "tags": ["Authorization"],
+        "operationId": "getSecurityControlRequest",
+        "summary": "读取双人安全控制请求详情",
+        "x-capability": "control.read",
+        "parameters": [{"$ref": "#/components/parameters/ControlRequestId"}],
+        "responses": {"200": {"description": "控制请求详情", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlRequest"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/control-requests/{controlRequestId}/approve": {
+      "post": {
+        "tags": ["Authorization"],
+        "operationId": "approveSecurityControlRequest",
+        "summary": "批准双人安全控制请求",
+        "x-capability": "control.approve",
+        "parameters": [{"$ref": "#/components/parameters/ControlRequestId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlDecisionRequest"}}}},
+        "responses": {"200": {"description": "批准与执行结果", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlRequest"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/control-requests/{controlRequestId}/reject": {
+      "post": {
+        "tags": ["Authorization"],
+        "operationId": "rejectSecurityControlRequest",
+        "summary": "拒绝双人安全控制请求",
+        "x-capability": "control.approve",
+        "parameters": [{"$ref": "#/components/parameters/ControlRequestId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlDecisionRequest"}}}},
+        "responses": {"200": {"description": "拒绝结果", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ControlRequest"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/org-units": {
+      "get": {
+        "tags": ["Organization"],
+        "operationId": "listOrgUnits",
+        "summary": "读取组织节点",
+        "x-capability": "organization.read",
+        "parameters": [{"name": "parentId", "in": "query", "schema": {"$ref": "#/components/schemas/Id"}}, {"name": "revision", "in": "query", "schema": {"type": "integer", "format": "int64", "minimum": 1}}],
+        "responses": {"200": {"description": "组织节点", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/OrgUnit"}}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      },
+      "post": {
+        "tags": ["Organization"],
+        "operationId": "createOrgUnit",
+        "summary": "创建组织节点",
+        "x-capability": "organization.manage",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrgUnitWriteRequest"}}}},
+        "responses": {"201": {"description": "组织节点", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrgUnit"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/org-units/{orgUnitId}": {
+      "patch": {
+        "tags": ["Organization"],
+        "operationId": "updateOrgUnit",
+        "summary": "更新组织节点",
+        "x-capability": "organization.manage",
+        "parameters": [{"$ref": "#/components/parameters/OrgUnitId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrgUnitWriteRequest"}}}},
+        "responses": {"200": {"description": "组织节点", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrgUnit"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      },
+      "delete": {
+        "tags": ["Organization"],
+        "operationId": "deleteOrgUnit",
+        "summary": "删除组织节点",
+        "x-capability": "organization.manage",
+        "parameters": [{"$ref": "#/components/parameters/OrgUnitId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ReasonRequest"}}}},
+        "responses": {"204": {"description": "已删除"}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/audit/events": {
+      "get": {
+        "tags": ["Audit"],
+        "operationId": "searchAuditEvents",
+        "summary": "分页查询审计事件",
+        "x-capability": "audit.search",
+        "parameters": [
+          {"name": "occurredFrom", "in": "query", "required": true, "schema": {"type": "string", "format": "date-time"}},
+          {"name": "occurredTo", "in": "query", "required": true, "schema": {"type": "string", "format": "date-time"}},
+          {"name": "eventCode", "in": "query", "schema": {"type": "string"}},
+          {"name": "actorAccountId", "in": "query", "schema": {"$ref": "#/components/schemas/Id"}},
+          {"name": "subjectAccountId", "in": "query", "schema": {"$ref": "#/components/schemas/Id"}},
+          {"name": "requestId", "in": "query", "schema": {"type": "string"}},
+          {"$ref": "#/components/parameters/Cursor"},
+          {"$ref": "#/components/parameters/Limit"}
+        ],
+        "responses": {"200": {"description": "审计事件分页", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AuditEventPage"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/audit/events/{eventId}": {
+      "get": {
+        "tags": ["Audit"],
+        "operationId": "getAuditEvent",
+        "summary": "读取审计事件详情",
+        "x-capability": "audit.detail.read",
+        "parameters": [{"name": "eventId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}}],
+        "responses": {"200": {"description": "按 clearance 脱敏的事件详情", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AuditEventDetail"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/audit/export-jobs": {
+      "post": {
+        "tags": ["Audit"],
+        "operationId": "createAuditExportJob",
+        "summary": "创建审计导出任务",
+        "x-capability": "audit.export",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AuditExportRequest"}}}},
+        "responses": {"202": {"description": "审计导出任务", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }
+    },
+    "/system/audit/export-jobs/{jobId}": {"$ref": "#/components/pathItems/GetAuditExportJob"},
+    "/system/audit/export-jobs/{jobId}/download-ticket": {"$ref": "#/components/pathItems/CreateAuditDownloadTicket"}
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"},
+      "sessionCookie": {"type": "apiKey", "in": "cookie", "name": "shtong_session"}
+    },
+    "parameters": {
+      "IdempotencyKey": {"name": "Idempotency-Key", "in": "header", "required": true, "schema": {"type": "string", "minLength": 16, "maxLength": 128}},
+      "Cursor": {"name": "cursor", "in": "query", "schema": {"type": "string", "maxLength": 512}},
+      "Limit": {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 200, "default": 50}},
+      "AccountId": {"name": "accountId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "AssignmentId": {"name": "assignmentId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "ControlRequestId": {"name": "controlRequestId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "OrgUnitId": {"name": "orgUnitId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "JobId": {"name": "jobId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "CommandId": {"name": "commandId", "in": "path", "required": true, "schema": {"$ref": "#/components/schemas/Id"}},
+      "SsoAdapterId": {"name": "X-Shtong-Adapter-Id", "in": "header", "required": true, "schema": {"type": "string", "maxLength": 100}},
+      "SsoAdapterSecret": {"name": "X-Shtong-Adapter-Secret", "in": "header", "required": true, "schema": {"type": "string", "maxLength": 512, "writeOnly": true}}
+    },
+    "responses": {
+      "Error": {"description": "统一错误", "headers": {"X-Request-Id": {"schema": {"type": "string"}}}, "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}}}
+    },
+    "pathItems": {
+      "ResetPasswordCommand": {"post": {
+        "tags": ["Accounts"],
+        "operationId": "resetAccountPasswords",
+        "summary": "单个或批量重置账户密码",
+        "x-capability": "account.password.reset",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BulkAccountCommandRequest"}}}},
+        "responses": {"202": {"description": "命令已接受", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "DeleteCommand": {"post": {
+        "tags": ["Accounts"],
+        "operationId": "deleteAccountsLogically",
+        "summary": "单个或批量逻辑删除账户",
+        "x-capability": "account.delete",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BulkAccountCommandRequest"}}}},
+        "responses": {"202": {"description": "命令已接受", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "GraduateCommand": {"post": {
+        "tags": ["Accounts"],
+        "operationId": "graduateAccounts",
+        "summary": "单个或批量移入毕业生账户",
+        "x-capability": "account.graduate",
+        "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BulkAccountCommandRequest"}}}},
+        "responses": {"202": {"description": "命令已接受", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobAccepted"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "GetExportJob": {"get": {
+        "tags": ["Export"],
+        "operationId": "getAccountExportJob",
+        "summary": "读取账户导出任务",
+        "x-capability": "account.export",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}],
+        "responses": {"200": {"description": "导出任务", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobStatus"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "CreateExportDownloadTicket": {"post": {
+        "tags": ["Export"],
+        "operationId": "createAccountExportDownloadTicket",
+        "summary": "签发账户导出下载票据",
+        "x-capability": "account.export",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"200": {"description": "短期下载票据", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/DownloadTicket"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "GetAuditExportJob": {"get": {
+        "tags": ["Audit"],
+        "operationId": "getAuditExportJob",
+        "summary": "读取审计导出任务",
+        "x-capability": "audit.export",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}],
+        "responses": {"200": {"description": "审计导出任务", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/JobStatus"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }},
+      "CreateAuditDownloadTicket": {"post": {
+        "tags": ["Audit"],
+        "operationId": "createAuditExportDownloadTicket",
+        "summary": "签发审计导出下载票据",
+        "x-capability": "audit.export",
+        "parameters": [{"$ref": "#/components/parameters/JobId"}, {"$ref": "#/components/parameters/IdempotencyKey"}],
+        "responses": {"200": {"description": "短期下载票据", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/DownloadTicket"}}}}, "4XX": {"$ref": "#/components/responses/Error"}, "default": {"$ref": "#/components/responses/Error"}}
+      }}
+    },
+    "schemas": {
+      "Id": {"type": "string", "format": "uuid"},
+      "RoleCode": {"type": "string", "enum": ["USER", "TEACHER_ADMIN", "STUDENT_ADMIN", "MEDICAL_INSURANCE_ADMIN", "SYSTEM_ADMIN"]},
+      "InitialRoleCode": {"type": "string", "enum": ["USER", "TEACHER_ADMIN", "STUDENT_ADMIN", "MEDICAL_INSURANCE_ADMIN"]},
+      "Gender": {"type": "string", "enum": ["MALE", "FEMALE", "OTHER"]},
+      "Workspace": {"type": "string", "enum": ["USER", "ADMIN", "SYSTEM_ADMIN"]},
+      "OrgUnitType": {"type": "string", "enum": ["SCHOOL", "COLLEGE", "GRADE", "CLASS"]},
+      "AccountLifecycleStatus": {"type": "string", "enum": ["ACTIVE", "GRADUATED", "DELETED"]},
+      "AccountSecurityStatus": {"type": "string", "enum": ["NORMAL", "TEMPORARILY_LOCKED", "MANUALLY_LOCKED"]},
+      "LoginRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["loginName", "password", "channel"],
+        "properties": {
+          "loginName": {"type": "string", "minLength": 1, "maxLength": 100},
+          "password": {"type": "string", "minLength": 1, "maxLength": 128, "writeOnly": true},
+          "channel": {"type": "string", "enum": ["WEB_USER", "WEB_ADMIN", "ANDROID", "IOS"]}
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {"type": "string", "enum": ["AUTHENTICATED", "PASSWORD_CHANGE_REQUIRED", "PROFILE_COMPLETION_REQUIRED", "DENIED"]},
+          "challengeId": {"type": ["string", "null"]},
+          "expiresAt": {"type": ["string", "null"], "format": "date-time"},
+          "allowedActions": {"type": "array", "items": {"type": "string", "enum": ["PASSWORD_CHANGE", "PROFILE_READ", "PROFILE_COMPLETE", "LOGOUT"]}},
+          "session": {"oneOf": [{"$ref": "#/components/schemas/SessionEstablished"}, {"type": "null"}]}
+        }
+      },
+      "TokenRefreshRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["channel"],
+        "properties": {"channel": {"type": "string", "enum": ["WEB_USER", "WEB_ADMIN", "ANDROID", "IOS"]}, "refreshToken": {"type": ["string", "null"], "writeOnly": true}}
+      },
+      "PasswordChangeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["currentPassword", "newPassword"],
+        "properties": {"currentPassword": {"type": "string", "maxLength": 128, "writeOnly": true}, "newPassword": {"type": "string", "minLength": 8, "maxLength": 128, "writeOnly": true}}
+      },
+      "ContextSwitchRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["workspace"],
+        "properties": {"workspace": {"$ref": "#/components/schemas/Workspace"}}
+      },
+      "SessionContext": {
+        "type": "object",
+        "required": ["id", "workspace", "assuranceLevel", "expiresAt"],
+        "properties": {"id": {"$ref": "#/components/schemas/Id"}, "workspace": {"$ref": "#/components/schemas/Workspace"}, "assuranceLevel": {"type": "string", "enum": ["AAL1", "AAL2", "AAL3"]}, "expiresAt": {"type": "string", "format": "date-time"}}
+      },
+      "MobileTokenSet": {
+        "type": "object",
+        "required": ["tokenType", "accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt"],
+        "properties": {"tokenType": {"const": "Bearer"}, "accessToken": {"type": "string", "readOnly": true}, "refreshToken": {"type": "string", "readOnly": true}, "accessTokenExpiresAt": {"type": "string", "format": "date-time"}, "refreshTokenExpiresAt": {"type": "string", "format": "date-time"}}
+      },
+      "SessionEstablished": {
+        "type": "object",
+        "required": ["sessionId", "context", "tokenDelivery"],
+        "properties": {"sessionId": {"$ref": "#/components/schemas/Id"}, "context": {"$ref": "#/components/schemas/SessionContext"}, "tokenDelivery": {"type": "string", "enum": ["HTTP_ONLY_COOKIE", "RESPONSE_BODY"]}, "mobileTokens": {"oneOf": [{"$ref": "#/components/schemas/MobileTokenSet"}, {"type": "null"}]}}
+      },
+      "BootstrapResponse": {
+        "type": "object",
+        "required": ["contractVersion", "authorizationVersion", "profileCompletionRequired", "activeModules", "shellActions", "availableWorkspaces"],
+        "properties": {
+          "contractVersion": {"type": "string", "const": "account-access-baseline.v1"},
+          "authorizationVersion": {"type": "integer", "format": "int64", "minimum": 1},
+          "profileCompletionRequired": {"type":"boolean"},
+          "activeContext": {"oneOf": [{"$ref": "#/components/schemas/SessionContext"}, {"type": "null"}]},
+          "activeModules": {"type": "array", "items": {"$ref": "#/components/schemas/ActiveModule"}},
+          "shellActions": {"type": "array", "items": {"type": "string", "enum": ["PROFILE", "PROFILE_COMPLETE", "CHANGE_PASSWORD", "LOGOUT"]}},
+          "availableWorkspaces": {"type": "array", "items": {"$ref": "#/components/schemas/AvailableWorkspace"}}
+        }
+      },
+      "ActiveModule": {"type": "object", "required": ["code", "routeKey", "order"], "properties": {"code": {"type": "string"}, "routeKey": {"type": "string"}, "order": {"type": "integer"}, "externalSystem": {"type": "string"}, "sso": {"type": "string", "enum": ["server-ticket"]}}},
+      "AvailableWorkspace": {"type": "object", "required": ["code", "requiresStepUp"], "properties": {"code": {"$ref": "#/components/schemas/Workspace"}, "requiresStepUp": {"type": "boolean"}}},
+      "ProfileOrganizationItem": {"type": "object", "required": ["type", "code", "name"], "properties": {"type": {"$ref": "#/components/schemas/OrgUnitType"}, "code": {"type": "string"}, "name": {"type": "string"}}},
+      "ProfileCounselor": {"type": "object", "required": ["displayName", "personNo"], "properties": {"displayName": {"type": "string"}, "personNo": {"type": "string"}}},
+      "ProfileScope": {"type": "object", "required": ["type", "name", "path"], "properties": {"type": {"type": "string", "enum": ["SYSTEM", "COLLEGE", "GRADE", "CLASS"]}, "name": {"type": "string"}, "path": {"type": "string"}}},
+      "ProfileManagedScope": {"type": "object", "required": ["roleCode", "scopes"], "properties": {"roleCode": {"$ref": "#/components/schemas/RoleCode"}, "scopes": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileScope"}}}},
+      "Profile": {"type": "object", "required": ["accountId", "displayName", "personNo", "roleCodes", "organizationPath", "counselors", "managedScopes", "profileCompletionRequired", "version"], "properties": {"accountId": {"$ref": "#/components/schemas/Id"}, "displayName": {"type": "string"}, "personNo": {"type": "string"}, "gender": {"oneOf": [{"$ref": "#/components/schemas/Gender"}, {"type": "null"}]}, "ethnicity": {"type": ["string", "null"]}, "age": {"type": ["integer", "null"], "minimum": 0}, "roleCodes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/RoleCode"}}, "organizationPath": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileOrganizationItem"}}, "counselors": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileCounselor"}}, "managedScopes": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileManagedScope"}}, "profileCompletionRequired":{"type":"boolean"}, "idCardNumberMasked":{"type":["string","null"]}, "mobileNumberMasked":{"type":["string","null"]}, "currentAddressMasked":{"type":["string","null"]}, "householdAddressMasked":{"type":["string","null"]}, "version": {"type": "integer", "format": "int64"}}},
+      "AdministrativeDivision": {"type":"object","required":["code","name"],"properties":{"code":{"type":"string","pattern":"^[0-9]{12}$"},"name":{"type":"string"}}},
+      "ProfileAddressInput": {"type":"object","additionalProperties":false,"required":["provinceCode","cityCode","districtCode","detail"],"properties":{"provinceCode":{"type":"string","pattern":"^[0-9]{12}$"},"cityCode":{"type":"string","pattern":"^[0-9]{12}$"},"districtCode":{"type":"string","pattern":"^[0-9]{12}$"},"detail":{"type":"string","minLength":2,"maxLength":200}}},
+      "ProfileAddressDetail": {"allOf":[{"$ref":"#/components/schemas/ProfileAddressInput"},{"type":"object","required":["provinceName","cityName","districtName"],"properties":{"provinceName":{"type":"string"},"cityName":{"type":"string"},"districtName":{"type":"string"}}}]},
+      "ProfileCompletionRequest": {"type":"object","additionalProperties":false,"required":["idCardNumber","mobileNumber","ethnicity","currentAddress","householdAddress"],"properties":{"idCardNumber":{"type":"string","minLength":18,"maxLength":18,"writeOnly":true},"mobileNumber":{"type":"string","pattern":"^1[3-9][0-9]{9}$","writeOnly":true},"ethnicity":{"type":"string","minLength":1,"maxLength":20},"currentAddress":{"$ref":"#/components/schemas/ProfileAddressInput"},"householdAddress":{"$ref":"#/components/schemas/ProfileAddressInput"}}},
+      "ProfileCompletionResponse": {"type":"object","required":["profile","session"],"properties":{"profile":{"$ref":"#/components/schemas/Profile"},"session":{"$ref":"#/components/schemas/SessionEstablished"}}},
+      "SensitiveFieldRevealRequest": {"type":"object","additionalProperties":false,"required":["password"],"properties":{"password":{"type":"string","maxLength":128,"writeOnly":true}}},
+      "SensitiveFieldRevealResponse": {"type":"object","required":["field","value"],"properties":{"field":{"type":"string","enum":["ID_CARD_NUMBER","MOBILE_NUMBER","CURRENT_ADDRESS","HOUSEHOLD_ADDRESS"]},"value":{"type":"string","readOnly":true}}},
+      "ScopeCeilingInput": {"type": "object", "additionalProperties": false, "required": ["orgUnitId"], "properties": {"orgUnitId": {"$ref": "#/components/schemas/Id"}}},
+      "RoleAssignmentInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["roleCode", "scopeCeilings"],
+        "properties": {"roleCode": {"$ref": "#/components/schemas/InitialRoleCode"}, "scopeCeilings": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/ScopeCeilingInput"}}}
+      },
+      "AccountCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["loginName", "displayName", "personNo", "roleAssignments", "reason"],
+        "properties": {
+          "loginName": {"type": "string", "minLength": 1, "maxLength": 100},
+          "displayName": {"type": "string", "minLength": 1, "maxLength": 100},
+          "personNo": {"type": "string", "minLength": 1, "maxLength": 100},
+          "gender": {"oneOf": [{"$ref": "#/components/schemas/Gender"}, {"type": "null"}]},
+          "classId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]},
+          "roleAssignments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/components/schemas/RoleAssignmentInput"}},
+          "reason": {"type": "string", "minLength": 2, "maxLength": 500}
+        }
+      },
+      "AccountUpdateRequest": {"type": "object", "additionalProperties": false, "required": ["loginName", "displayName", "expectedVersion", "reason"], "properties": {"loginName": {"type": "string", "minLength": 1, "maxLength": 100}, "displayName": {"type": "string", "minLength": 1, "maxLength": 100}, "gender": {"oneOf": [{"$ref": "#/components/schemas/Gender"}, {"type": "null"}]}, "ethnicity":{"oneOf":[{"type":"string","maxLength":20},{"type":"null"}]},"idCardNumber":{"type":"string","minLength":18,"maxLength":18,"writeOnly":true},"mobileNumber":{"type":"string","pattern":"^1[3-9][0-9]{9}$","writeOnly":true},"currentAddress":{"$ref":"#/components/schemas/ProfileAddressInput"},"householdAddress":{"$ref":"#/components/schemas/ProfileAddressInput"},"expectedVersion": {"type": "integer", "format": "int64", "minimum": 1}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "EnrollmentChangeRequest": {"type": "object", "additionalProperties": false, "required": ["classId", "expectedVersion", "reason"], "properties": {"classId": {"$ref": "#/components/schemas/Id"}, "expectedVersion": {"type": "integer", "format": "int64", "minimum": 1}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "OneTimeCredential": {"type": "object", "required": ["temporaryPassword"], "properties": {"temporaryPassword": {"type": "string", "readOnly": true}}},
+      "AccountCreateResponse": {"type": "object", "required": ["account", "credentialDeliveryStatus"], "properties": {"account": {"$ref": "#/components/schemas/AccountDetail"}, "credentialDeliveryStatus": {"type": "string", "enum": ["AVAILABLE_ONCE", "ALREADY_DELIVERED"]}, "credential": {"oneOf": [{"$ref": "#/components/schemas/OneTimeCredential"}, {"type": "null"}]}}},
+      "AccountSummary": {
+        "type": "object",
+        "required": ["id", "loginName", "displayName", "personNo", "lifecycleStatus", "securityStatus", "roleCodes", "passwordChangeRequired", "version"],
+        "properties": {
+          "id": {"$ref": "#/components/schemas/Id"}, "loginName": {"type": "string"}, "displayName": {"type": "string"}, "personNo": {"type": "string"}, "gender": {"oneOf": [{"$ref": "#/components/schemas/Gender"}, {"type": "null"}]}, "ethnicity": {"type": ["string", "null"]}, "age": {"type": ["integer", "null"], "minimum": 0},
+          "graduatedAt": {"type":["string","null"],"format":"date-time"}, "graduatedReason": {"type":["string","null"]}, "lifecycleStatus": {"$ref": "#/components/schemas/AccountLifecycleStatus"}, "securityStatus": {"$ref": "#/components/schemas/AccountSecurityStatus"},
+          "roleCodes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/RoleCode"}}, "passwordChangeRequired": {"type": "boolean"}, "version": {"type": "integer", "format": "int64"}
+        }
+      },
+      "AccountDetail": {"allOf": [{"$ref": "#/components/schemas/AccountSummary"}, {"type": "object", "properties": {"classId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "organizationPath": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileOrganizationItem"}},"idCardNumber":{"type":["string","null"],"readOnly":true},"mobileNumber":{"type":["string","null"],"readOnly":true},"currentAddress":{"oneOf":[{"$ref":"#/components/schemas/ProfileAddressDetail"},{"type":"null"}]},"householdAddress":{"oneOf":[{"$ref":"#/components/schemas/ProfileAddressDetail"},{"type":"null"}]},"profileCompleted":{"type":"boolean"}, "lastLoginAt": {"type": ["string", "null"], "format": "date-time"}, "createdAt": {"type": "string", "format": "date-time"}, "updatedAt": {"type": "string", "format": "date-time"}}}]},
+      "AccountPage": {"type": "object", "required": ["items", "hasMore"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/AccountSummary"}}, "nextCursor": {"type": ["string", "null"]}, "hasMore": {"type": "boolean"}}},
+      "BulkAccountCommandRequest": {"type": "object", "additionalProperties": false, "required": ["accountIds", "expectedCount", "reason"], "properties": {"accountIds": {"type": "array", "minItems": 1, "maxItems": 5000, "uniqueItems": true, "items": {"$ref": "#/components/schemas/Id"}}, "expectedCount": {"type": "integer", "minimum": 1, "maximum": 5000}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "ReasonRequest": {"type": "object", "additionalProperties": false, "required": ["reason"], "properties": {"reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "JobAccepted": {"type": "object", "required": ["jobId", "state"], "properties": {"jobId": {"$ref": "#/components/schemas/Id"}, "state": {"type": "string"}, "controlRequestId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}}},
+      "JobStatus": {"type": "object", "required": ["id", "state", "createdAt"], "properties": {"id": {"$ref": "#/components/schemas/Id"}, "state": {"type": "string", "enum": ["PENDING", "RUNNING", "READY", "FAILED", "EXPIRED", "COMPLETED"]}, "resultCount": {"type": ["integer", "null"], "minimum": 0}, "failureCode": {"type": ["string", "null"]}, "createdAt": {"type": "string", "format": "date-time"}, "completedAt": {"type": ["string", "null"], "format": "date-time"}}},
+      "ImportJob": {"type": "object", "required": ["id", "state", "templateVersion", "rowCount", "errorCount", "organizationRevision"], "properties": {"id": {"$ref": "#/components/schemas/Id"}, "state": {"type": "string", "enum": ["UPLOADED", "VALIDATING", "VALID", "INVALID", "COMMITTED", "EXPIRED", "FAILED"]}, "templateVersion": {"type": "string"}, "rowCount": {"type": "integer", "minimum": 0}, "errorCount": {"type": "integer", "minimum": 0}, "organizationRevision": {"type": "integer", "format": "int64", "minimum": 1}}},
+      "ImportError": {"type": "object", "required": ["sheet", "row", "field", "code"], "properties": {"sheet": {"type": "string"}, "row": {"type": "integer", "minimum": 1}, "field": {"type": "string"}, "code": {"type": "string"}, "messageKey": {"type": "string"}}},
+      "ImportErrorPage": {"type": "object", "required": ["items", "hasMore"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/ImportError"}}, "nextCursor": {"type": ["string", "null"]}, "hasMore": {"type": "boolean"}}},
+      "ImportCommitRequest": {"type": "object", "additionalProperties": false, "required": ["validatedRevision", "expectedAccountCount", "reason"], "properties": {"validatedRevision": {"type": "integer", "format": "int64", "minimum": 1}, "expectedAccountCount": {"type": "integer", "minimum": 1, "maximum": 5000}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "AccountExportFilter": {"type": "object", "additionalProperties": false, "properties": {"q": {"type": "string", "maxLength": 100}, "lifecycleStatus": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/AccountLifecycleStatus"}}, "roleCodes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/RoleCode"}}, "orgUnitIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/Id"}}}},
+      "SelectedAccounts": {"type": "object", "additionalProperties": false, "required": ["mode", "accountIds"], "properties": {"mode": {"const": "SELECTED"}, "accountIds": {"type": "array", "minItems": 1, "maxItems": 5000, "uniqueItems": true, "items": {"$ref": "#/components/schemas/Id"}}}},
+      "FilteredAllAccounts": {"type": "object", "additionalProperties": false, "required": ["mode", "filter", "expectedCount"], "properties": {"mode": {"const": "FILTERED_ALL"}, "filter": {"$ref": "#/components/schemas/AccountExportFilter"}, "expectedCount": {"type": "integer", "minimum": 1}}},
+      "AccountExportRequest": {"type": "object", "additionalProperties": false, "required": ["selection", "purpose"], "properties": {"selection": {"oneOf": [{"$ref": "#/components/schemas/SelectedAccounts"}, {"$ref": "#/components/schemas/FilteredAllAccounts"}], "discriminator": {"propertyName": "mode"}}, "purpose": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "DownloadTicket": {"type": "object", "required": ["url", "expiresAt", "singleUse"], "properties": {"url": {"type": "string", "format": "uri"}, "expiresAt": {"type": "string", "format": "date-time"}, "singleUse": {"type": "boolean"}}},
+      "MedicalInsuranceSsoTicket": {"type": "object", "additionalProperties": false, "required": ["moduleCode", "audience", "redirectUrl", "expiresAt", "singleUse"], "properties": {"moduleCode": {"const": "medical-insurance"}, "audience": {"const": "medical-insurance"}, "redirectUrl": {"type": "string", "format": "uri-reference"}, "expiresAt": {"type": "string", "format": "date-time"}, "singleUse": {"const": true}}},
+      "SsoExchangeRequest": {"type": "object", "additionalProperties": false, "required": ["ticket", "audience"], "properties": {"ticket": {"type": "string", "minLength": 1, "maxLength": 200, "writeOnly": true}, "audience": {"const": "medical-insurance"}}},
+      "SsoIntrospectRequest": {"type": "object", "additionalProperties": false, "required": ["sessionToken"], "properties": {"sessionToken": {"type": "string", "minLength": 1, "maxLength": 512, "writeOnly": true}}},
+      "SsoScope": {"type": "object", "required": ["type", "name", "path"], "properties": {"type": {"type": "string", "enum": ["SYSTEM", "COLLEGE", "GRADE", "CLASS"]}, "code": {"type": ["string", "null"]}, "name": {"type": "string"}, "path": {"type": "string"}, "college": {"type": ["string", "null"]}, "grade": {"type": ["string", "null"]}, "className": {"type": ["string", "null"]}}},
+      "SsoStudentProjection": {"type": ["object", "null"], "properties": {"gender": {"type": ["string", "null"]}, "organizationPath": {"type": "array", "items": {"$ref": "#/components/schemas/ProfileOrganizationItem"}}, "college": {"type": ["string", "null"]}, "grade": {"type": ["string", "null"]}, "className": {"type": ["string", "null"]}}},
+      "SsoSessionProjection": {"type": "object", "additionalProperties": false, "required": ["accountId", "loginName", "displayName", "personNo", "shtongRoleCode", "ybRole", "authorizationVersion", "sessionId", "sessionExpiresAt", "shtongSessionToken", "scopes", "student"], "properties": {"accountId": {"$ref": "#/components/schemas/Id"}, "loginName": {"type": "string"}, "displayName": {"type": "string"}, "personNo": {"type": "string"}, "shtongRoleCode": {"$ref": "#/components/schemas/RoleCode"}, "ybRole": {"type": "string", "enum": ["student", "admin", "super_admin"]}, "authorizationVersion": {"type": "integer", "format": "int64", "minimum": 1}, "sessionId": {"$ref": "#/components/schemas/Id"}, "sessionExpiresAt": {"type": "string", "format": "date-time"}, "shtongSessionToken": {"type": "string", "writeOnly": true}, "scopes": {"type": "array", "items": {"$ref": "#/components/schemas/SsoScope"}}, "student": {"$ref": "#/components/schemas/SsoStudentProjection"}}},
+      "SsoRevokeResponse": {"type": "object", "required": ["revoked"], "properties": {"revoked": {"const": true}}},
+      "RoleTemplate": {"type": "object", "required": ["code", "workspace", "allowedScopeCeilingTypes"], "properties": {"code": {"$ref": "#/components/schemas/RoleCode"}, "workspace": {"$ref": "#/components/schemas/Workspace"}, "allowedScopeCeilingTypes": {"type": "array", "items": {"$ref": "#/components/schemas/OrgUnitType"}}}},
+      "RoleAssignmentCreateRequest": {"type": "object", "additionalProperties": false, "required": ["roleCode", "scopeCeilingOrgUnitIds", "validFrom", "reason"], "properties": {"roleCode": {"$ref": "#/components/schemas/RoleCode"}, "scopeCeilingOrgUnitIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/components/schemas/Id"}}, "validFrom": {"type": "string", "format": "date-time"}, "validTo": {"type": ["string", "null"], "format": "date-time"}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "RoleAssignment": {"type": "object", "required": ["id", "roleCode", "status", "scopeCeilings", "validFrom", "version"], "properties": {"id": {"$ref": "#/components/schemas/Id"}, "roleCode": {"$ref": "#/components/schemas/RoleCode"}, "status": {"type": "string", "enum": ["ACTIVE", "REVOKED", "EXPIRED"]}, "scopeCeilings": {"type": "array", "items": {"$ref": "#/components/schemas/OrgUnit"}}, "validFrom": {"type": "string", "format": "date-time"}, "validTo": {"type": ["string", "null"], "format": "date-time"}, "version": {"type": "integer", "format": "int64"}}},
+      "AccountAuthorization": {"type": "object", "required": ["accountId", "authorizationVersion", "roleAssignments"], "properties": {"accountId": {"$ref": "#/components/schemas/Id"}, "authorizationVersion": {"type": "integer", "format": "int64"}, "roleAssignments": {"type": "array", "items": {"$ref": "#/components/schemas/RoleAssignment"}}}},
+      "ControlRequestState": {"type": "string", "enum": ["PENDING", "APPROVED", "REJECTED", "EXPIRED", "EXECUTED", "INVALIDATED"]},
+      "ControlPendingResponse": {"type": "object", "required": ["state", "controlRequestId", "expiresAt"], "properties": {"state": {"const": "PENDING_APPROVAL"}, "controlRequestId": {"$ref": "#/components/schemas/Id"}, "expiresAt": {"type": "string", "format": "date-time"}}},
+      "ControlRequest": {"type": "object", "required": ["id", "commandType", "state", "requestedBy", "requestedAt", "expiresAt", "targetCount", "reason", "version"], "properties": {"id": {"$ref": "#/components/schemas/Id"}, "commandType": {"type": "string"}, "state": {"$ref": "#/components/schemas/ControlRequestState"}, "requestedBy": {"$ref": "#/components/schemas/Id"}, "requestedAt": {"type": "string", "format": "date-time"}, "expiresAt": {"type": "string", "format": "date-time"}, "decidedBy": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "decidedAt": {"type": ["string", "null"], "format": "date-time"}, "targetCount": {"type": "integer", "minimum": 1}, "reason": {"type": "string"}, "version": {"type": "integer", "format": "int64"}}},
+      "ControlRequestPage": {"type": "object", "required": ["items", "hasMore"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/ControlRequest"}}, "nextCursor": {"type": ["string", "null"]}, "hasMore": {"type": "boolean"}}},
+      "ControlDecisionRequest": {"type": "object", "additionalProperties": false, "required": ["expectedVersion", "reason"], "properties": {"expectedVersion": {"type": "integer", "format": "int64", "minimum": 1}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "OrgUnit": {"type": "object", "required": ["id", "type", "code", "name", "status", "version"], "properties": {"id": {"$ref": "#/components/schemas/Id"}, "type": {"$ref": "#/components/schemas/OrgUnitType"}, "parentId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "code": {"type": "string"}, "name": {"type": "string"}, "status": {"type": "string", "enum": ["ACTIVE", "DELETED"]}, "version": {"type": "integer", "format": "int64"}}},
+      "OrgUnitWriteRequest": {"type": "object", "additionalProperties": false, "required": ["type", "code", "name", "expectedVersion", "reason"], "properties": {"type": {"$ref": "#/components/schemas/OrgUnitType"}, "parentId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "code": {"type": "string", "minLength": 1, "maxLength": 100}, "name": {"type": "string", "minLength": 1, "maxLength": 200}, "expectedVersion": {"type": "integer", "format": "int64", "minimum": 0}, "reason": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "AuditEventSummary": {"type": "object", "required": ["eventId", "eventCode", "occurredAt", "actorAccountId", "authorizationDecision", "outcome", "requestId"], "properties": {"eventId": {"$ref": "#/components/schemas/Id"}, "eventCode": {"type": "string"}, "occurredAt": {"type": "string", "format": "date-time"}, "actorAccountId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "authorizationDecision": {"type": "string", "enum": ["ALLOW", "DENY", "NOT_APPLICABLE"]}, "outcome": {"type": "string", "enum": ["SUCCESS", "FAILED", "DENIED", "PARTIAL", "RELEASED", "DELIVERY_UNKNOWN"]}, "requestId": {"type": "string"}, "subjectCount": {"type": "integer", "minimum": 0}}},
+      "AuditEventDetail": {"allOf": [{"$ref": "#/components/schemas/AuditEventSummary"}, {"type": "object", "properties": {"workspace": {"$ref": "#/components/schemas/Workspace"}, "channel": {"type": "string"}, "reasonCode": {"type": ["string", "null"]}, "subjects": {"type": "array", "items": {"$ref": "#/components/schemas/Id"}}, "resources": {"type": "array", "items": {"type": "object", "additionalProperties": true}}, "changes": {"type": "array", "items": {"type": "object", "additionalProperties": true}}, "authorizationEvidence": {"type": "array", "items": {"type": "object", "additionalProperties": true}}}}]},
+      "AuditEventPage": {"type": "object", "required": ["items", "hasMore"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/AuditEventSummary"}}, "nextCursor": {"type": ["string", "null"]}, "hasMore": {"type": "boolean"}}},
+      "AuditExportRequest": {"type": "object", "additionalProperties": false, "required": ["occurredFrom", "occurredTo", "purpose"], "properties": {"occurredFrom": {"type": "string", "format": "date-time"}, "occurredTo": {"type": "string", "format": "date-time"}, "eventCodes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}, "actorAccountId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "subjectAccountId": {"oneOf": [{"$ref": "#/components/schemas/Id"}, {"type": "null"}]}, "purpose": {"type": "string", "minLength": 2, "maxLength": 500}}},
+      "FieldError": {"type": "object", "required": ["field", "code"], "properties": {"field": {"type": "string"}, "code": {"type": "string"}}},
+      "ErrorResponse": {"type": "object", "required": ["code", "messageKey", "requestId"], "properties": {"code": {"type": "string"}, "messageKey": {"type": "string"}, "requestId": {"type": "string"}, "fieldErrors": {"type": "array", "items": {"$ref": "#/components/schemas/FieldError"}}}}
+    }
+  }
+}

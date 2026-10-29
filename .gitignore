@@ -1,0 +1,60 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+
+# Logs, caches, and temporary files
+*.log
+logs/
+.cache/
+.temp/
+.tmp/
+tmp/
+temp/
+
+# Dependencies, builds, and test output
+node_modules/
+dist/
+build/
+coverage/
+.gradle/
+DerivedData/
+Pods/
+**/target/
+**/.nuxt/
+**/.nuxt-*/
+**/.output/
+apps/web/user/--host/
+test-results/
+playwright-report/
+artifacts/
+**/oh_modules/
+**/.hvigor/
+**/__pycache__/
+*.py[cod]
+*.class
+apps/mobile/android/app/libs/*.jar
+apps/mobile/android/app/libs/*.aar
+.codex-*.jar
+.codex-*.aar
+*.apk
+*.aab
+*.ipa
+*.hap
+
+# Windows profile/cache folders that tools sometimes create in the working tree
+%SystemDrive%/

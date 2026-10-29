@@ -1,0 +1,1 @@
+import {createApp} from 'vue';import App from './App.vue';import './style.css';import './pagination.css';import './accessibility.css';import './usability.css';import './embedded-module.css';createApp(App).mount('#app')

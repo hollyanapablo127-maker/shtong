@@ -1,0 +1,7 @@
+.embedded-module{min-height:100vh;padding:20px clamp(14px,3vw,40px) 32px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}
+.embedded-module-bar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.embedded-module-bar h1{margin:0;font-size:24px}
+.embedded-module-frame{position:relative;min-height:calc(100vh - 112px);border:1px solid var(--border);background:#fff;overflow:hidden}
+.embedded-module-frame iframe{display:block;width:100%;height:calc(100vh - 112px);min-height:620px;border:0;background:#fff}
+.embedded-module-loading{position:absolute;inset:0;display:grid;place-items:center;background:#fff;color:var(--muted);z-index:1}
+.admin-shell.module-shell{padding-left:0}.admin-shell.module-shell>.sidebar{display:none}

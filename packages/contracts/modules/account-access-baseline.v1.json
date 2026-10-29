@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract": "shtong.modules.account-access-baseline",
+  "version": "1.0.0",
+  "status": "frozen-for-phase-1",
+  "shellActions": [
+    {"code": "PROFILE", "capability": "profile.read"},
+    {"code": "CHANGE_PASSWORD", "capability": "credential.password.change"},
+    {"code": "LOGOUT", "capability": "session.logout"}
+  ],
+  "modules": [
+    {"code": "system.accounts", "titleKey": "module.system.accounts", "iconKey": "users", "routeKey": "system.accounts"},
+    {"code": "system.graduates", "titleKey": "module.system.graduates", "iconKey": "graduation-cap", "routeKey": "system.graduates"},
+    {"code": "system.authorization", "titleKey": "module.system.authorization", "iconKey": "shield-check", "routeKey": "system.authorization"},
+    {"code": "system.organization", "titleKey": "module.system.organization", "iconKey": "building-2", "routeKey": "system.organization"},
+    {"code": "system.audit", "titleKey": "module.system.audit", "iconKey": "scroll-text", "routeKey": "system.audit"},
+    {"code": "medical-insurance", "titleKey": "module.medicalInsurance", "iconKey": "shield-plus", "routeKey": "medical-insurance", "externalSystem": "_yb", "sso": "server-ticket"}
+  ],
+  "exposures": [
+    {"moduleCode": "system.accounts", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["account.read"], "order": 10},
+    {"moduleCode": "system.graduates", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["account.read"], "order": 15},
+    {"moduleCode": "system.authorization", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["authorization.read"], "order": 20},
+    {"moduleCode": "system.organization", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["organization.read"], "order": 30},
+    {"moduleCode": "system.audit", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["audit.search"], "order": 40},
+    {"moduleCode": "medical-insurance", "workspace": "USER", "channels": ["WEB_USER", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["module.medical-insurance.access"], "externalRole": "student", "order": 50},
+    {"moduleCode": "medical-insurance", "workspace": "ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["module.medical-insurance.access"], "externalRole": "admin", "scopeTypes": ["COLLEGE", "GRADE", "CLASS"], "order": 50},
+    {"moduleCode": "medical-insurance", "workspace": "SYSTEM_ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"], "matchMode": "ALL", "requiredCapabilities": ["module.medical-insurance.access"], "externalRole": "super_admin", "scopeTypes": ["SYSTEM"], "order": 50}
+  ],
+  "emptyWorkspaces": [
+    {"workspace": "USER", "channels": ["WEB_USER", "ANDROID", "IOS"]},
+    {"workspace": "ADMIN", "channels": ["WEB_ADMIN", "ANDROID", "IOS"]}
+  ],
+  "excludedChannels": ["MINIPROGRAM_USER"]
+}

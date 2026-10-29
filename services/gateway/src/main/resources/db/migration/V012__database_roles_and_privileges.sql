@@ -1,0 +1,25 @@
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'shtong_runtime') THEN
+    CREATE ROLE shtong_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'shtong_audit_writer') THEN
+    CREATE ROLE shtong_audit_writer NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'shtong_audit_reader') THEN
+    CREATE ROLE shtong_audit_reader NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+  END IF;
+END $$;
+
+REVOKE ALL ON SCHEMA iam, org, audit, admin, catalog FROM PUBLIC;
+GRANT USAGE ON SCHEMA iam, org, admin, catalog TO shtong_runtime;
+GRANT USAGE ON SCHEMA audit TO shtong_audit_writer, shtong_audit_reader;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA iam, org, admin TO shtong_runtime;
+GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO shtong_runtime;
+GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA audit TO shtong_audit_writer;
+GRANT SELECT ON ALL TABLES IN SCHEMA audit TO shtong_audit_reader;
+REVOKE UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA audit FROM shtong_runtime, shtong_audit_writer, shtong_audit_reader;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA audit REVOKE UPDATE, DELETE, TRUNCATE ON TABLES FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA audit GRANT SELECT, INSERT ON TABLES TO shtong_audit_writer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA audit GRANT SELECT ON TABLES TO shtong_audit_reader;

@@ -1,0 +1,14 @@
+# The development profile runs the Django adapter on its own local port.
+# Deployments behind a shared reverse proxy should provide this URL explicitly.
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+shtong:
+  persistence-mode: memory
+  medical-insurance:
+    entry-url: ${SHTONG_MEDICAL_INSURANCE_ENTRY_URL:http://localhost:8765/medical-insurance/sso/callback/?embedded=1}
+    mobile-entry-url: ${SHTONG_MEDICAL_INSURANCE_MOBILE_ENTRY_URL:}
+    graduation-projection-url: ${SHTONG_MEDICAL_INSURANCE_GRADUATION_PROJECTION_URL:}
+    lifecycle-projection-url: ${SHTONG_MEDICAL_INSURANCE_LIFECYCLE_PROJECTION_URL:}
